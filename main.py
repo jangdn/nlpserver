@@ -15,6 +15,8 @@ api = Api(app)
 
 amount = 5000
 
+temprate = 0
+
 class tsne(Resource):
     def get(self, id):
         getid = id
@@ -138,7 +140,19 @@ class tsne(Resource):
             ys = transformed[:,1]
             return {'question': questionSet[:amount], "transform": transformed.tolist(), 'xs': (xs.tolist()), 'ys': (ys.tolist())}
 
+class data(Resource):
+    def post(self):
+        print(request.get_json())
+        return {"success" : 1}
 
+class datarate(Resource):
+    def get(self):
+        global temprate
+        temprate += 10
+        return temprate
+
+api.add_resource(data, '/api/data')
+api.add_resource(datarate, '/api/datarate')
 api.add_resource(tsne, '/api/tsne/<string:id>')
 
 if __name__ == '__main__':
