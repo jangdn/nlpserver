@@ -19,7 +19,8 @@ class tsne(Resource):
     def get(self, id):
         getid = id
         if(getid == 'c') :
-            data = np.load('./0_trainData.npy')
+            print("start tsnec")
+            data = np.load('./data/0_trainData.npy')
             contextSet = []
             context_cSet = np.array([[0]*200])
             for a in range(0, 100):
@@ -33,7 +34,8 @@ class tsne(Resource):
             return {'context': contextSet[:amount], "transform": transformed.tolist(), 'xs': (xs.tolist()), 'ys': (ys.tolist())}
 
         elif(getid == 'cc') :
-            data = np.load('./0_trainData.npy')
+            print("start tsnecc")
+            data = np.load('./data/0_trainData.npy')
             contextSet = []
             char_cSet = np.array([[0]*100])
             for a in range(0, 100):
@@ -47,7 +49,8 @@ class tsne(Resource):
             return {'context': contextSet[:amount], "transform": transformed.tolist(), 'xs': (xs.tolist()), 'ys': (ys.tolist())}
         
         elif(getid == 'cq') :
-            data = np.load('./0_trainData.npy')
+            print("start tsnecq")
+            data = np.load('./data/0_trainData.npy')
             questionSet = []
             char_qSet = np.array([[0]*100])
             for a in range(0, 100):
@@ -61,7 +64,8 @@ class tsne(Resource):
             return {'question': questionSet[:amount], "transform": transformed.tolist(), 'xs': (xs.tolist()), 'ys': (ys.tolist())}
 
         elif(getid == 'hc') :
-            data = np.load('./0_trainData.npy')
+            print("start tsnehc")
+            data = np.load('./data/0_trainData.npy')
             contextSet = []
             highway_cSet = np.array([[0]*200])
             for a in range(0, 100):
@@ -75,7 +79,8 @@ class tsne(Resource):
             return {'context': contextSet[:amount], "transform": transformed.tolist(), 'xs': (xs.tolist()), 'ys': (ys.tolist())}
 
         elif(getid == 'hq') :
-            data = np.load('./0_trainData.npy')
+            print("start tsnehq")
+            data = np.load('./data/0_trainData.npy')
             questionSet = []
             highway_qSet = np.array([[0]*200])
             for a in range(0, 100):
@@ -89,7 +94,8 @@ class tsne(Resource):
             return {'question': questionSet[:amount], "transform": transformed.tolist(), 'xs': (xs.tolist()), 'ys': (ys.tolist())}
 
         elif(getid == 'q') :
-            data = np.load('./0_trainData.npy')
+            print("start tsneq")
+            data = np.load('./data/0_trainData.npy')
             questionSet = []
             context_qSet = np.array([[0]*200])
             for a in range(0, 100):
@@ -103,7 +109,8 @@ class tsne(Resource):
             return {'question': questionSet[:amount], "transform": transformed.tolist(), 'xs': (xs.tolist()), 'ys': (ys.tolist())}
 
         elif(getid == 'wc') :
-            data = np.load('./0_trainData.npy')
+            print("start tsnewc")
+            data = np.load('./data/0_trainData.npy')
             contextSet = []
             word_cSet = np.array([[0]*100])
             for a in range(0, 100):
@@ -117,7 +124,8 @@ class tsne(Resource):
             return {'context': contextSet[:amount], "transform": transformed.tolist(), 'xs': (xs.tolist()), 'ys': (ys.tolist())}
 
         elif(getid == 'wq') :
-            data = np.load('./0_trainData.npy')
+            print("start tsnewq")
+            data = np.load('./data/0_trainData.npy')
             questionSet = []
             word_qSet = np.array([[0]*100])
             for a in range(0, 100):
