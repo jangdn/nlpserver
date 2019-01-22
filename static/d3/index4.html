@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      rect {
+        fill: transparent;
+        shape-rendering: crispEdges;
+      }
+      .axis path,
+      .axis line {
+        fill: none;
+        stroke: rgba(0, 0, 0, 0.1);
+        shape-rendering: crispEdges;
+      }
+
+      .axisLine {
+        fill: none;
+        shape-rendering: crispEdges;
+        stroke: rgba(0, 0, 0, 0.5);
+        stroke-width: 2px;
+      }
+
+	.http://l5vd5.asuscomm.com:3001/dot {
+	  fill-opacity: .5;
+	}
+
+	.d3-tip {
+	  line-height: 1;
+	  font-weight: bold;
+	  padding: 12px;
+	  background: rgba(0, 0, 0, 0.8);
+	  color: #fff;
+	  border-radius: 2px;
+	}
+
+	/* Creates a small triangle extender for the tooltip */
+	.d3-tip:after {
+	  box-sizing: border-box;
+	  display: inline;
+	  font-size: 10px;
+	  width: 100%;
+	  line-height: 1;
+	  color: rgba(0, 0, 0, 0.8);
+	  content: "\25BC";
+	  position: absolute;
+	  text-align: center;
+	}
+
+	/* Style northward tooltips differently */
+	.d3-tip.n:after {
+	  margin: -1px 0 0 0;
+	  top: 100%;
+	  left: 0;
+	}
+	
+	.target_word {
+	  color: orange
+	}
+    </style>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+    <script>
+    // set the dimensions and margins of the graph
+      window.onload = function() {
+        var margin = { top: 50, right: 300, bottom: 50, left: 50 },
+          outerWidth = 1050,
+          outerHeight = 500,
+          width = outerWidth - margin.left - margin.right,
+          height = outerHeight - margin.top - margin.bottom;
+
+          var x = d3.scale.linear()
+            .range([0, width]).nice();
+
+          var y = d3.scale.linear()
+            .range([height, 0]).nice();
+
+        d3.json("data4.json", function (data) {
+	  $.each(data.transform, function(i, d) {
+	    d[2] = {};
+	    if(data.question[i-2]) {
+	      d[2][0] = data.question[i-2];
+	    }
+	    if(data.question[i-1]) {
+	      d[2][1] = data.question[i-1];
+	    }
+	    d[2][2] = data.question[i];
+	    if(data.question[i+1]) {
+	      d[2][3] = data.question[i+1];
+	    }
+	    if(data.question[i+2]) {
+	      d[2][4] = data.question[i+2];
+	    }
+	  });
+          
+          var xMax = d3.max(data.xs, function(d) {return d}) * 1.05,
+              xMin = d3.min(data.xs, function(d) {return d}),
+              yMax = d3.max(data.ys, function(d) {return d}) * 1.05,
+              yMin = d3.min(data.ys, function(d) {return d});
+          x.domain([xMin, xMax]);
+          y.domain([yMin, yMax]);
+
+          var uniqueData = [];
+
+          var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+            .tickSize(-height);
+
+          var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickSize(-width);
+
+	  var tip = d3.tip()
+	    .attr("class", "d3-tip")
+	    .offset([-10, 0])
+	    .html(function(d) {
+              return d[2][0]+" "+d[2][1]+" "+"<strong class='target_word'>"+d[2][2]+"</strong>"+" "+d[2][3]+" "+d[2][4];
+          });
+
+	  var zoomBeh = d3.behavior.zoom()
+	    .x(x)
+	    .y(y)
+	    .scaleExtent([0, 500])
+	    .on("zoom", zoom);
+
+          var svg = d3.select("#scatter")
+            .append("svg")
+              .attr("width", outerWidth)
+              .attr("height", outerHeight)
+            .append("g")
+              .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	      .call(zoomBeh);
+
+	  svg.call(tip);
+
+          svg.append("rect")
+	    .attr("width", width)
+  	    .attr("height", height);
+
+          svg.append("g")
+            .classed("x axis", true)
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+
+          svg.append("g")
+            .classed("y axis", true)
+            .call(yAxis);
+
+          var objects = svg.append("svg")
+            .classed("objects", true)
+            .attr("width", width)
+            .attr("height", height);
+
+          objects.append("svg:line")
+            .classed("axisLine hAxisLine", true)
+            .attr("x1", 0)
+            .attr("y1", 0)
+            .attr("x2", width)
+            .attr("y2", 0)
+            .attr("transform", "translate(0," + height + ")");
+
+          objects.append("svg:line")
+            .classed("axisLine vAxisLine", true)
+            .attr("x1", 0)
+            .attr("y1", 0)
+            .attr("x2", 0)
+            .attr("y2", height);
+
+          objects.selectAll(".dot")
+            .data(data.transform)
+          .enter().append("circle")
+            .classed("dot", true)
+            .attr("r", 4)
+            .attr("transform", transform)
+            .style("fill", 'red')
+            .on("mouseover", tip.show)
+            .on("mouseout", tip.hide);
+
+	  function zoom() {
+	    svg.select(".x.axis").call(xAxis);
+	    svg.select(".y.axis").call(yAxis);
+   	    svg.selectAll(".dot")
+	    .attr("transform", transform);
+	  }
+
+	  function transform(d) {
+	    return "translate(" + x(d[0]) + "," + y(d[1]) + ")";
+	  }
+        });
+
+      }
+
+
+    </script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+  </head>
+  <body>
+    <div id="scatter"></div>
+  </body>
+</html>

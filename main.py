@@ -9,7 +9,7 @@ from sklearn.manifold import TSNE
 import pandas as pd
 import math
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 cors = CORS(app)
 api = Api(app)
 
@@ -142,6 +142,8 @@ class tsne(Resource):
 
 class data(Resource):
     def post(self):
+        global temprate
+        temprate = 0
         print(request.get_json())
         return {"success" : 1}
 
@@ -151,6 +153,12 @@ class datarate(Resource):
         temprate += 10
         return temprate
 
+class graph(Resource):
+    def get(self):
+        print("d3 call")
+        return app.send_static_file('d3/index.html')
+
+api.add_resource(graph, '/api/graph')
 api.add_resource(data, '/api/data')
 api.add_resource(datarate, '/api/datarate')
 api.add_resource(tsne, '/api/tsne/<string:id>')
