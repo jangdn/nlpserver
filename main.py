@@ -1,8 +1,10 @@
 import os
-from flask import Flask, request, jsonify, send_from_directory, send_file
+from flask import Flask, request, jsonify, send_from_directory, send_file, render_template, Response
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 import werkzeug
+#sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from bidaf_flask import execute_bidaf
 
 import numpy as np
 from sklearn.manifold import TSNE
@@ -16,6 +18,8 @@ api = Api(app)
 amount = 5000
 
 temprate = 0
+
+
 
 class tsne(Resource):
     def get(self, id):
@@ -153,15 +157,22 @@ class datarate(Resource):
         temprate += 10
         return temprate
 
-class graph(Resource):
-    def get(self):
-        print("d3 call")
-        return app.send_static_file('d3/index.html')
 
-api.add_resource(graph, '/api/graph')
 api.add_resource(data, '/api/data')
 api.add_resource(datarate, '/api/datarate')
 api.add_resource(tsne, '/api/tsne/<string:id>')
+
+@app.route('/api/bidaf')
+def bidaf():
+    if request.method == 'GET':
+        result = execute_bidaf
+        print(result)
+        return result
+
+@app.route('/api/graph/<string:page_name>')
+def static_page(page_name):
+    if request.method == 'GET':
+        return render_template('%s.html' % page_name)
 
 if __name__ == '__main__':
     app.run(debug=True)
