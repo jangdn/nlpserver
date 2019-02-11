@@ -16,7 +16,6 @@ cors = CORS(app)
 api = Api(app)
 
 amount = 5000
-
 temprate = 0
 
 
